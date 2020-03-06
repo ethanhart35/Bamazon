@@ -26,7 +26,7 @@ function start() {
     connection.query("SELECT * FROM products", function (err, result) {
         if (err) throw err;
         for (var i = 0; i < result.length; i++) {
-            // console.log(result[i]);
+            console.log(result[i].stock);
             console.log("ID: " + result[i].id + "\n" + result[i].name + ": " + "$" + result[i].price);
         }
         inquirer.prompt([{
@@ -41,19 +41,36 @@ function start() {
         }]).then(function (answer) {
             for (var i = 0; i < result.length; i++) {
                 if (result[i].id === parseInt(answer.id)) {
-                    console.log("hello");
                     if (result[i].stock >= answer.quantity) {
                         var newstock = result[i].stock - answer.quantity;
                         parseInt(newstock);
                         connection.query("UPDATE products SET ? WHERE ?", [{ stock: newstock }, { id: result[i].id }], function(err, res){
                             if(err) throw err;
                         });
-                        console.log(newstock);
+                        console.log("Order Complete"+"\n"+"You spent: $" + result[i].price * parseInt(answer.quantity));
+                        end();
                     }else{
-                        console.log("Not enough Stock!")
+                        console.log("Not enough Stock!");
+                        end();
                     }
                 }
             }
         });
+    });
+}
+function end(){
+    inquirer.prompt([{
+        name: "end",
+        type: "list",
+        message: "What would you like to do?",
+        choices: ["Continue Shopping", "Exit"]
+    }]).then(function(answer){
+        if(answer.end === "Continue Shopping"){
+            start();
+        }
+        else{
+            connection.end();
+            console.log("Thank you for using Bamazon");
+        }
     });
 }
