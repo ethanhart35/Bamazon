@@ -25,11 +25,25 @@ connection.connect(function (err) {
 function start() {
     connection.query("SELECT * FROM products", function (err, result) {
         if (err) throw err;
-        for (var i = 0; i < result.length; i++) {
-            console.log(result[i].stock);
-            console.log("ID: " + result[i].id + "\n" + result[i].name + ": " + "$" + result[i].price);
-        }
         inquirer.prompt([{
+            name: "display",
+            type: "list",
+            message: "Would you like to display the current stock of items?",
+            choices: ["YES", "NO"]
+        }]).then(function(answer){
+            if(answer.display === "YES"){
+                for (var i = 0; i < result.length; i++) {
+                    console.log("ID: " + result[i].id + "\n" + result[i].name + ": " + "$" + result[i].price + "\n" + "Stock: " + result[i].stock);
+                }
+            }
+            else{
+                for (var i = 0; i < result.length; i++) {
+                    console.log("ID: " + result[i].id + "\n" + result[i].name + ": " + "$" + result[i].price);
+                }
+            }
+        })
+
+        .then(function(answer){inquirer.prompt([{
             name: "id",
             type: "input",
             message: "Enter the ID of the item you would like to buy"
@@ -56,6 +70,7 @@ function start() {
                 }
             }
         });
+    });
     });
 }
 function end(){
