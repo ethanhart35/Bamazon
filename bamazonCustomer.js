@@ -42,8 +42,8 @@ function start() {
                 }
             }
         })
-
-        .then(function(answer){inquirer.prompt([{
+        .then(function(answer){
+            inquirer.prompt([{
             name: "id",
             type: "input",
             message: "Enter the ID of the item you would like to buy"
